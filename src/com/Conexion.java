@@ -1,10 +1,16 @@
 package com;
 
+import com.conexion.mysql.ConexionMySql;
+import com.conexion.oracle.ConexionOracle;
+import com.conexion.sqlserver.ConexionSqlServer;
 import com.exception.ExcepcionConexionNula;
 import com.exception.ExcepcionPassword;
 import com.exception.ExcepcionServidor;
 import com.exception.ExcepcionUsuario;
+import com.exception.ExcpcionSIDOracle;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Clase principal manejadora de las conexiones de acceso a las bases de datos.
@@ -14,12 +20,18 @@ import java.sql.Connection;
 public class Conexion implements DatosConexion {
 
     private String servidor, usuario, password, basedato;
+    private int puerto;
     private Connection con;
     private int TIPO;
+    private Object CONEXIONACTUAL;
 
     //<editor-fold defaultstate="collapsed" desc="Constructores">
     public Conexion() {
 
+    }
+
+    public Conexion(Connection conn) {
+	this.con = conn;
     }
 
     /**
@@ -36,34 +48,92 @@ public class Conexion implements DatosConexion {
 	this.password = password;
 	this.basedato = basedato;
     }
+
+    public Conexion(String servidor, String usuario, String password, String basedato, Connection conn) {
+	this.servidor = servidor;
+	this.usuario = usuario;
+	this.password = password;
+	this.basedato = basedato;
+	this.con = conn;
+    }
 //</editor-fold>
 
     @Override
-    public Conexion GetConexion(int tipo) throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword {
+    public void activarConexion(int tipo) throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword, ExcpcionSIDOracle {
+	this.TIPO = tipo;
 	if (validar()) {
 	    switch (TIPO) {
-		case ORACLE: return getOracle();
-		case SQLSERVER: return getSqlServer();
-		case MYSQL: return getMySql();
+		case ORACLE:
+		    throw new ExcpcionSIDOracle("No se puede generar una conexión a Oracle Database si no se ha proporcionado el SID de la conexión.");
+		case SQLSERVER:
+
+		case MYSQL:
 		default:
-		    return null;
 	    }
-	}else{
+	} else {
 	    System.out.println("Error al validar los datos de la conexión.");
+	}
+    }
+
+    @Override
+    public void activarConexion(int tipo, String SID) throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword, ExcpcionSIDOracle {
+	this.TIPO = tipo;
+	if (validar()) {
+	    switch (TIPO) {
+		case ORACLE:
+		    CONEXIONACTUAL = new ConexionOracle(getServidor(), getUsuario(), getBasedato(), getPassword(), getPuerto(), SID);
+		case SQLSERVER:
+
+		case MYSQL:
+
+		default:
+
+	    }
+	} else {
+	    System.out.println("Error al validar los datos de la conexión.");
+	}
+    }
+
+    public void abrirConexion() throws ExcpcionSIDOracle, ClassNotFoundException, SQLException {
+	if (CONEXIONACTUAL instanceof ConexionOracle) {
+	    ((ConexionOracle) CONEXIONACTUAL).abrirConexion();
+	} else if (CONEXIONACTUAL instanceof ConexionSqlServer) {
+
+	} else if (CONEXIONACTUAL instanceof ConexionMySql) {
+
+	}
+    }
+
+    public ResultSet ejecutarQuery(String query) throws SQLException {
+	if (CONEXIONACTUAL instanceof ConexionOracle) {
+	    return ((ConexionOracle) CONEXIONACTUAL).ejecutarQuery(query);
+	} else if (CONEXIONACTUAL instanceof ConexionSqlServer) {
+
+	} else if (CONEXIONACTUAL instanceof ConexionMySql) {
+
 	}
 	return null;
     }
-    
-    private Conexion getOracle(){
+
+    public ResultSet ejecutar(String query) throws SQLException {
+	if (CONEXIONACTUAL instanceof ConexionOracle) {
+	    ((ConexionOracle) CONEXIONACTUAL).ejecutar(query);
+	} else if (CONEXIONACTUAL instanceof ConexionSqlServer) {
+
+	} else if (CONEXIONACTUAL instanceof ConexionMySql) {
+
+	}
 	return null;
     }
-    
-    private Conexion getSqlServer(){
-	return null;
-    }
-    
-    private Conexion getMySql(){
-	return null;
+
+    public void cerrar() throws SQLException {
+	if (CONEXIONACTUAL instanceof ConexionOracle) {
+	    ((ConexionOracle) CONEXIONACTUAL).cerrarConexion();
+	} else if (CONEXIONACTUAL instanceof ConexionSqlServer) {
+
+	} else if (CONEXIONACTUAL instanceof ConexionMySql) {
+
+	}
     }
 
     private boolean validar() throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword {
@@ -85,7 +155,7 @@ public class Conexion implements DatosConexion {
 
     @Override
     public void probarConexion() {
-
+	
     }
 
     //<editor-fold defaultstate="collapsed" desc="Accesores">
@@ -137,6 +207,16 @@ public class Conexion implements DatosConexion {
     @Override
     public void setCon(Connection con) {
 	this.con = con;
+    }
+
+    @Override
+    public void setPuerto(int puerto) {
+	this.puerto = puerto;
+    }
+
+    @Override
+    public int getPuerto() {
+	return puerto;
     }
 //</editor-fold>
 }

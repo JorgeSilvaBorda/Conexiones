@@ -9,6 +9,7 @@ import com.exception.ExcepcionConexionNula;
 import com.exception.ExcepcionPassword;
 import com.exception.ExcepcionServidor;
 import com.exception.ExcepcionUsuario;
+import com.exception.ExcpcionSIDOracle;
 import java.sql.Connection;
 
 /**
@@ -31,13 +32,15 @@ public interface DatosConexion {
      * 0 = Oracle.
      * 1 = Sql Server.
      * 2 = MySql.
-     * @return {@link com.Conexion}
      * @throws com.exception.ExcepcionConexionNula
      * @throws com.exception.ExcepcionServidor
      * @throws com.exception.ExcepcionUsuario
      * @throws com.exception.ExcepcionPassword
+     * @throws com.exception.ExcpcionSIDOracle
      */
-    Conexion GetConexion(int tipo) throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword;
+    void activarConexion(int tipo) throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword, ExcpcionSIDOracle;
+    
+    void activarConexion(int tipo, String SID)  throws ExcepcionConexionNula, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword, ExcpcionSIDOracle ;
 
     String getPassword();
 
@@ -57,5 +60,9 @@ public interface DatosConexion {
     void setServidor(String servidor);
 
     void setUsuario(String usuario);
+    
+    public void setPuerto(int puerto);
+    
+    public int getPuerto();
     //</editor-fold>
 }
