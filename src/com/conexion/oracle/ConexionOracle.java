@@ -54,6 +54,22 @@ public class ConexionOracle {
 	ResultSet rs = st.executeQuery(query);
 	return rs;
     }
+    
+    public void testQuery(String query) throws SQLException{
+	Statement st = this.connection.createStatement();
+	ResultSet rs = st.executeQuery(query);
+	int columnas = rs.getMetaData().getColumnCount();
+	for(int i = 1; i <= columnas; i++){
+	    System.out.print("[" + rs.getMetaData().getColumnName(i) + "]");
+	}
+	System.out.println("");
+	while(rs.next()){
+	    for(int i = 1; i <= columnas; i++){
+		System.out.print("[" + rs.getObject(i) + "]");
+	    }
+	    System.out.println("");
+	}
+    }
 
     public Connection getConnection() {
 	return connection;
