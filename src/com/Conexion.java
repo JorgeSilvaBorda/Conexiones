@@ -3,14 +3,19 @@ package com;
 import com.conexion.oracle.ConexionOracle;
 import com.conexion.sqlserver.ConexionSqlServer;
 import com.exception.*;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Clase principal manejadora de las conexiones de acceso a las bases de datos.
- *
+ * Esta clase en su conposición cuenta con facilitadores de ejecución de 
+ * consultas a la base de datos.
+ * Para poder utilizarla, se debe instanciar un nuevo objeto de ella, con los 
+ * datos necesarios para la conexión y luego llamar a los métodos necesarios 
+ * de acuerdo al motor de base de datos que se desea conectar y ejecutar las instrucciones.
+ * 
  * @author Jorge Silva Borda
+ * @version 0.0.1-beta
  */
 public class Conexion {
 
