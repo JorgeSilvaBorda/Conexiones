@@ -15,7 +15,17 @@ public class ConexionOracle {
     private final String SID;
     private final int PUERTO;
     private Connection connection;
-
+    
+    //<editor-fold defaultstate="collapsed" desc="Constructores">
+    /**
+     * Constructor de ConexionOracle
+     * @param SERVIDOR {@code String}. Con el nombre de servidor o IP de la base de datos.
+     * @param USUARIO {@code String}. Con el usuario de la base de datos.
+     * @param PASSWORD {@code String}. El password del usuario.
+     * @param BASEDATOS {@code String}. El nombre del esquema de Oracle.
+     * @param SID {@code String}. El nombre del SID de la instancia Oracle.
+     * @param PUERTO {@code int}. Con el puerto a utilizar para la conexión.
+     */
     public ConexionOracle(String SERVIDOR, String USUARIO, String PASSWORD, String BASEDATOS, String SID, int PUERTO) {
 	this.SERVIDOR = SERVIDOR;
 	this.USUARIO = USUARIO;
@@ -24,12 +34,23 @@ public class ConexionOracle {
 	this.SID = SID;
 	this.PUERTO = PUERTO;
     }
+//</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Métodos de la clase">
+    /**
+     * Método para establecer la conexión y poder ejecutar instancias de ella.
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public void abrirConexion() throws ClassNotFoundException, SQLException {
 	Class.forName("oracle.jdbc.driver.OracleDriver");
 	this.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + SERVIDOR + ":" + Integer.toString(PUERTO) + ":" + SID, USUARIO, PASSWORD);
     }
     
+    /**
+     * Cierra la conexión que se encuentra abierta para evitar encolamiento de peticiones.
+     * @throws SQLException
+     */
     public void cerrar() throws SQLException{
 	try {
 	    if(!this.connection.isClosed()){
@@ -44,17 +65,33 @@ public class ConexionOracle {
 	}
     }
     
+    /**
+     * Elecuta una instrucción SQL.
+     * @param query {@code String}. Con la instrucción SQL a ejecutar.
+     * @throws SQLException
+     */
     public void ejecutar(String query) throws SQLException{
 	Statement st = this.connection.createStatement();
 	st.execute(query);
     }
     
+    /**
+     * Ejecuta una query de consulta a la base de datos.
+     * @param query {@code String}. Con la instrucción SQL a ejecutar.
+     * @return {@link ResultSet}. Con la carga de datos obtenida.
+     * @throws SQLException
+     */
     public ResultSet ejecutarQuery(String query) throws SQLException{
 	Statement st = this.connection.createStatement();
 	ResultSet rs = st.executeQuery(query);
 	return rs;
     }
     
+    /**
+     * Método de pruebas para ejecutar query e imprimir los resultados.
+     * @param query {@code String}. Con la instrucción SQL a ejecutar.
+     * @throws SQLException
+     */
     public void testQuery(String query) throws SQLException{
 	Statement st = this.connection.createStatement();
 	ResultSet rs = st.executeQuery(query);
@@ -70,13 +107,25 @@ public class ConexionOracle {
 	    System.out.println("");
 	}
     }
-
+//</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Accesores">
+    
+    /**
+     * Devuelve la conexión ({@link java.sql.Connection})
+     * @return {@code java.sql.Connection}.
+     */
     public Connection getConnection() {
 	return connection;
     }
-
+    
+    /**
+     * Establece la conexión ({@link java.sql.Connection})
+     * @param connection {@code java.sql.Connnection}.
+     */
     public void setConnection(Connection connection) {
 	this.connection = connection;
     }
+//</editor-fold>
 
 }
