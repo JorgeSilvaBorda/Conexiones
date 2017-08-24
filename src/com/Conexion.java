@@ -11,7 +11,8 @@ import java.sql.SQLException;
  * @author Jorge Silva Borda
  */
 public class Conexion {
-    private String SERVIDOR, USUARIO, PASSWORD, BASEDATOS, SID;
+    private final String SERVIDOR, USUARIO, PASSWORD, BASEDATOS;
+    private String SID;
     private int PUERTO;
     private Connection connection;
 
@@ -51,6 +52,7 @@ public class Conexion {
 	    this.connection = DriverManager.getConnection("jdbc:oracle:thin:@" + SERVIDOR + ":" + Integer.toString(PUERTO) + ":" + SID, USUARIO, PASSWORD);
 	}
     }
+    
     
     public boolean validar() throws ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword{
 	if(SERVIDOR.equals("")){
