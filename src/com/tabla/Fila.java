@@ -6,17 +6,17 @@ import java.util.LinkedList;
  * @author Jorge Silva Borda
  */
 public class Fila {
-    private final LinkedList<String> datos;
+    private final LinkedList<Object> datos;
     
     public Fila(){
 	this.datos = new LinkedList();
     }
     
-    public LinkedList<String> getDatos(){
+    public LinkedList<Object> getDatos(){
 	return datos;
     }
     
-    public void addDato(String dato){
+    public void addDato(Object dato){
 	datos.add(dato);
     }
 }

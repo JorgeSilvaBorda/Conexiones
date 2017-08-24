@@ -157,6 +157,10 @@ public class Conexion {
 	this.oracle.cerrar();
     }
     
+    public void testQueryOracle(String query) throws SQLException{
+	this.oracle.testQuery(query);
+    }
+    
 //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Métodos generales">
