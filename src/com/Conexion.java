@@ -3,14 +3,19 @@ package com;
 import com.conexion.oracle.ConexionOracle;
 import com.conexion.sqlserver.ConexionSqlServer;
 import com.exception.*;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
  * Clase principal manejadora de las conexiones de acceso a las bases de datos.
- *
+ * Esta clase en su conposición cuenta con facilitadores de ejecución de 
+ * consultas a la base de datos.
+ * Para poder utilizarla, se debe instanciar un nuevo objeto de ella, con los 
+ * datos necesarios para la conexión y luego llamar a los métodos necesarios 
+ * de acuerdo al motor de base de datos que se desea conectar y ejecutar las instrucciones.
+ * 
  * @author Jorge Silva Borda
+ * @version 0.0.1-beta
  */
 public class Conexion {
 
@@ -113,7 +118,7 @@ public class Conexion {
      * @throws ExcepcionPassword
      * @throws ExcepcionSIDOracle
      */
-    public void ejecutarOracle(String query) throws SQLException, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword, ExcepcionSIDOracle, ExcepcionSIDOracle, ExcepcionSIDOracle {
+    public void ejecutarOracle(String query) throws SQLException, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword, ExcepcionSIDOracle{
 	if (validar()) {
 	    if (SID.equals("")) {
 		throw new ExcepcionSIDOracle("El SID de la conexión no puede estar vacío.");
@@ -159,6 +164,69 @@ public class Conexion {
     
     public void testQueryOracle(String query) throws SQLException{
 	this.oracle.testQuery(query);
+    }
+    
+//</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos de SQL Server">
+    
+    /**
+     * Método que abre una conexión de tipo SQL Server.
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws ExcepcionServidor
+     * @throws ExcepcionUsuario
+     * @throws ExcepcionPassword
+     * @see com.conexion.oracle.ConexionOracle
+     */
+    public void abrirConexionSQLServer() throws ClassNotFoundException, SQLException, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword {
+	if (validar()) {
+	    sqlServer = new ConexionSqlServer(SERVIDOR, USUARIO, PASSWORD, BASEDATOS, PUERTO);
+	    sqlServer.abrirConexion();
+	}
+    }
+    
+    /**
+     * Método para ejecutar una instrucción SQL. No devuelve resultados.
+     * @param query {@link java.lang.String}. Con la consulta que se desea enviar a ejecutar.
+     * @throws SQLException
+     * @throws ExcepcionServidor
+     * @throws ExcepcionUsuario
+     * @throws ExcepcionPassword
+     */
+    public void ejecutarSQLServer(String query) throws SQLException, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword {
+	if (validar()) {
+	    sqlServer.ejecutar(query);
+	}
+    }
+    
+    /**
+     * Método para ejecutar una instrucción SQL y obtener su {@link ResultSet}.
+     * @param query {@link java.lang.String}. Con la consulta que se desea hacer a la base de datos.
+     * @return {@link ResultSet}. Con los resultados para poder recorrer.
+     * @throws SQLException
+     * @throws ExcepcionServidor
+     * @throws ExcepcionUsuario
+     * @throws ExcepcionPassword
+     * @see ResultSet
+     */
+    public ResultSet ejecutarQuerySQLServer(String query) throws SQLException, ExcepcionServidor, ExcepcionUsuario, ExcepcionPassword {
+	if (validar()) {
+	    return sqlServer.ejecutarQuery(query);
+	}
+	return null;
+    }
+    
+    /**
+     * Cierra la conexión Oracle para evitar rechazos por parte del motor.
+     * @throws SQLException 
+     */
+    public void cerrarConexionSQLServer() throws SQLException{
+	this.sqlServer.cerrar();
+    }
+    
+    public void testQuerySQLServer(String query) throws SQLException{
+	this.sqlServer.testQuery(query);
     }
     
 //</editor-fold>
